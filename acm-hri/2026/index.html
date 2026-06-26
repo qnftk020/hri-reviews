@@ -66,10 +66,13 @@
   .chip.sec-Main{background:var(--c-amber-soft);color:var(--c-amber-strong)}
   .chip.sec-Companion{background:var(--c-indigo-soft);color:var(--c-indigo-strong)}
   /* 논문 탐색 */
-  .searchbar{margin:0 0 16px}
-  .searchbar input{width:100%;padding:13px 16px;border:2px solid var(--line);border-radius:var(--r-md);
+  .searchbar{display:flex;gap:10px;margin:0 0 16px}
+  .searchbar input{flex:1;min-width:0;padding:13px 16px;border:2px solid var(--line);border-radius:var(--r-md);
     font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink)}
   .searchbar input:focus{outline:none;border-color:var(--c-amber);background:#fff}
+  .resetbtn{flex:none;background:var(--surface);border:2px solid var(--line);border-radius:var(--r-md);
+    padding:0 18px;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+  .resetbtn:hover{border-color:var(--c-amber-line);color:var(--c-amber-strong);background:var(--c-amber-soft)}
   .cnt{color:var(--c-amber-strong);font-weight:800}
   .ph{color:var(--muted);font-size:14px;padding:16px 0}
   .pcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-md);
@@ -149,7 +152,7 @@
   <section class="panel full" id="drill" style="margin-top:20px">
     <h2 id="drillTitle">논문 탐색 <span class="cnt" id="drillCnt"></span></h2>
     <p class="hint">막대·키워드를 클릭하거나 검색하세요 · 논문 카드를 누르면 Abstract·DOI 팝업</p>
-    <div class="searchbar"><input id="q" type="search" placeholder="제목·저자·키워드 검색… (예: child, LLM, trust)"></div>
+    <div class="searchbar"><input id="q" type="search" placeholder="제목·저자·키워드 검색… (예: child, LLM, trust)"><button class="resetbtn" onclick="resetDrill()">↺ 초기화</button></div>
     <div id="drillBody"><p class="ph">위 그래프의 막대·키워드를 클릭하거나 검색창에 입력하면 논문이 표시됩니다.</p></div>
   </section>
 
@@ -231,6 +234,11 @@ function showList(title,list){
   b.innerHTML='<div style="font-weight:700;color:var(--ink-soft);margin-bottom:12px">'+esc(title)+'</div>'
     +list.slice(0,250).map(card).join('');
   document.getElementById('drill').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function resetDrill(){
+  document.getElementById('q').value='';
+  document.getElementById('drillTitle').innerHTML='논문 탐색 <span class="cnt" id="drillCnt"></span>';
+  document.getElementById('drillBody').innerHTML='<p class="ph">위 그래프의 막대·키워드를 클릭하거나 검색창에 입력하면 논문이 표시됩니다.</p>';
 }
 
 /* 검색 */
