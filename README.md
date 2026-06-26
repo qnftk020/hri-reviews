@@ -5,7 +5,7 @@ ACM/IEEE HRI 학회 논문집을 전수 분석한 학회 동향 대시보드 아
 ### ACM/IEEE HRI (`/acm-hri/`)
 - **2026** (Edinburgh, Scotland): 465편 — [/acm-hri/2026/](./acm-hri/2026/)
 - **2025** (Melbourne, Australia): 준비 중
-- **2024** (Boulder, CO, USA): 준비 중
+- **2024** (Boulder, CO, USA): 415편 — [/acm-hri/2024/](./acm-hri/2024/)
 - **2023** (Stockholm, Sweden): 준비 중
 - **2022** (Sapporo, Japan): 준비 중
 - **2021** (Boulder, CO, USA): 준비 중
