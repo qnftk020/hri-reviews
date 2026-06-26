@@ -28,18 +28,17 @@
     background:linear-gradient(180deg,#fff7ed 0%,#fef3c7 30%,#dbeafe 78%,#e0e7ff 100%);background-attachment:fixed;min-height:100vh}
   .wrap{max-width:1180px;margin:0 auto;padding:30px 24px 80px}
   /* 헤더 */
-  header.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-  .brand .bot{width:38px;height:38px;border-radius:12px;background:var(--grad-amber);display:grid;place-items:center;
-    font-size:20px;box-shadow:var(--sh-soft)}
-  .crumb{font-size:13px;color:var(--ink-soft);font-weight:700}
-  .crumb b{color:var(--c-amber-strong)}
-  a.home{font-size:13px;color:var(--c-blue-strong);text-decoration:none;font-weight:700;
-    background:var(--surface);border:1.5px solid var(--c-blue-line);padding:8px 14px;border-radius:var(--r-pill)}
-  a.home:hover{background:var(--c-blue-soft)}
+  header.top{margin-bottom:14px}
+  .crumbnav{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:14px;font-weight:800}
+  .crumbnav a{color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+  .crumbnav a:hover{color:var(--c-amber-strong)}
+  .crumbnav .bot{width:34px;height:34px;border-radius:11px;background:var(--grad-amber);display:grid;place-items:center;
+    font-size:18px;box-shadow:var(--sh-soft)}
+  .crumbnav .sep{color:var(--muted)}
+  .crumbnav b{color:var(--c-amber-strong)}
   .hero{margin:18px 0 26px}
   .kicker{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-amber-strong);font-weight:800}
-  h1{font-size:38px;font-weight:800;margin:8px 0 6px;letter-spacing:-.02em}
+  h1{font-size:clamp(26px,6.5vw,38px);font-weight:800;margin:8px 0 6px;letter-spacing:-.02em;word-break:keep-all;line-height:1.18}
   h1 .hl{background:var(--grad-word);-webkit-background-clip:text;background-clip:text;color:transparent}
   .sub{color:var(--ink-soft);font-size:15px;max-width:70ch}
   /* KPI */
@@ -105,16 +104,18 @@
   .btn-doi:active{transform:scale(.97)}
   .btn-md{background:var(--surface);color:var(--c-blue-strong);border:2px solid var(--c-blue-line)}
   .foot{margin-top:38px;color:var(--ink-soft);font-size:12px;text-align:center;line-height:1.7;opacity:.85}
-  @media(max-width:880px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}h1{font-size:29px}}
+  @media(max-width:880px){
+    .grid{grid-template-columns:1fr;gap:16px}.kpis{grid-template-columns:repeat(2,1fr)}
+    .panel{padding:18px 15px}
+    .chartbox{height:400px}.chartbox.tall{height:560px}#wc{height:440px}
+    .sub{font-size:14px}
+  }
+  @media(max-width:430px){.chartbox{height:380px}.chartbox.tall{height:540px}#wc{height:400px}.kpi .n{font-size:28px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div class="brand"><span class="bot">🤖</span>
-      <span class="crumb">ACM HRI <b>›</b> 2026</span></div>
-    <a class="home" href="../">← 연도 목록</a>
-  </header>
+  <header class="top"><nav class="crumbnav"><a href="../../"><span class="bot">🤖</span> HRI Reviews</a><span class="sep">›</span><a href="../">ACM HRI</a><span class="sep">›</span><b>2026</b></nav></header>
 
   <div class="hero">
     <div class="kicker">ACM/IEEE HRI 2026 · Edinburgh</div>
@@ -177,6 +178,9 @@ const C={amber:'#f59e0b',blue:'#3b82f6',green:'#10b981',indigo:'#6366f1',coral:'
 const PALETTE=['#f59e0b','#3b82f6','#10b981','#6366f1','#f4736e','#b45309','#2563eb','#059669','#4f46e5','#d4504a','#fbbf24','#5b8def'];
 Chart.defaults.font.family="Pretendard, sans-serif";Chart.defaults.color=C.soft;
 Chart.defaults.maintainAspectRatio=false;Chart.defaults.responsive=true;
+// 긴 Y축 라벨(CCS 분야명·키워드)을 단어 경계에서 줄바꿈 → 모바일에서 잘리지 않음
+function wrapLabel(s,max){s=String(s);if(s.length<=max)return s;const ws=s.split(' '),ls=[];let c='';for(const w of ws){if((c+' '+w).trim().length>max){if(c)ls.push(c.trim());c=w;}else c=(c+' '+w).trim();}if(c)ls.push(c.trim());return ls;}
+const yTicks={autoSkip:false,font:{size:11},callback:function(v){return wrapLabel(this.getLabelForValue(v),16);}};
 
 (function(){
   const m=DATA.meta,t=m.by_track||{},tn=['t-amber','t-blue','t-green','t-indigo'];
@@ -248,7 +252,7 @@ new Chart(document.getElementById('ccsChart'),{type:'bar',
   data:{labels:ccs.map(d=>d[0]),datasets:[{data:ccs.map(d=>d[1]),
     backgroundColor:ccs.map((_,i)=>PALETTE[i%PALETTE.length]),borderRadius:6}]},
   options:{indexAxis:'y',plugins:{legend:{display:false}},
-    scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:{font:{size:11}}}},
+    scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:yTicks}},
     onClick:(e,el)=>{if(el.length){const c=ccs[el[0].index][0];showList('CCS 분야: '+c,papersBy('ccs',c));}}}});
 
 (function(){
@@ -258,7 +262,7 @@ new Chart(document.getElementById('ccsChart'),{type:'bar',
     data:{labels,datasets:[{label:'Main',data:labels.map(l=>mm[l]||0),backgroundColor:C.amber,borderRadius:5},
       {label:'Companion',data:labels.map(l=>cm[l]||0),backgroundColor:C.indigo,borderRadius:5}]},
     options:{indexAxis:'y',plugins:{legend:{display:false}},
-      scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+      scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:yTicks}}}});
 })();
 
 const kw20=DATA.kw.slice(0,20);
@@ -266,7 +270,7 @@ new Chart(document.getElementById('kwChart'),{type:'bar',
   data:{labels:kw20.map(d=>d[0]),datasets:[{data:kw20.map(d=>d[1]),
     backgroundColor:kw20.map((_,i)=>i<3?C.amber:C.blue),borderRadius:6}]},
   options:{indexAxis:'y',plugins:{legend:{display:false}},
-    scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:{font:{size:12}}}},
+    scales:{x:{grid:{color:C.line}},y:{grid:{display:false},ticks:yTicks}},
     onClick:(e,el)=>{if(el.length){const k=kw20[el[0].index][0];showList('키워드: '+k,papersBy('kw',k));}}}});
 
 (function(){
