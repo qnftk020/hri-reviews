@@ -114,6 +114,19 @@
     .sub{font-size:14px}
   }
   @media(max-width:430px){.chartbox{height:380px}.chartbox.tall{height:540px}#wc{height:400px}.kpi .n{font-size:28px}}
+  /* 인쇄(브라우저 PDF 저장) 최적화: 차트 라벨 겹침·페이지 경계 잘림 방지 + 색상 유지 */
+  @media print{
+    body{background:#fff}
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    .wrap{max-width:100%;padding:8px 12px}
+    .grid{display:block}
+    .panel{break-inside:avoid;page-break-inside:avoid;box-shadow:none;border:1px solid var(--line);margin-bottom:16px}
+    .kpis,header.top,.hero,#drill{break-inside:avoid;page-break-inside:avoid}
+    .chartbox{height:470px}
+    .chartbox.tall{height:700px}
+    #wc{height:470px}
+    .searchbar{display:none}
+  }
 </style>
 </head>
 <body>
@@ -289,6 +302,10 @@ new Chart(document.getElementById('kwChart'),{type:'bar',
       color:()=>PALETTE[Math.floor(Math.random()*PALETTE.length)],backgroundColor:'#fff',
       rotateRatio:0.16,rotationSteps:2,shrinkToFit:true,click:it=>showList('키워드: '+it[0],papersBy('kw',it[0]))});}
   if(window.WordCloud)draw();else window.addEventListener('load',draw);
+  // 인쇄(PDF 저장) 시 차트를 @media print 높이로 재렌더 → Y축 라벨 겹침 방지
+  ['beforeprint','afterprint'].forEach(ev=>window.addEventListener(ev,()=>{
+    try{Object.values(Chart.instances).forEach(c=>c.resize());draw();}catch(e){}
+  }));
 })();
 </script>
 </body>
